@@ -2,8 +2,11 @@ import React from "react";
 
 export default function GoogleAuth() {
   const handleGoogleLogin = () => {
-    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-    const redirectUri = "https://o-auth-callback-sla.vercel.app/api/callbackGoogle"; // Ensure this matches the one set in Google Cloud Console
+    // const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID;
+    const clientId =
+      "699400475494-hd4r32rnd7db5qmk2kr1nh30qmh93c3q.apps.googleusercontent.com";
+    const redirectUri =
+      "https://o-auth-callback-sla.vercel.app/api/callbackGoogle"; // Ensure this matches the one set in Google Cloud Console
     const scope = "email profile openid";
     const responseType = "code";
 
