@@ -16,6 +16,7 @@ export default function Dashboard() {
   const [service, playListID] = uselinkParser(link);
 
   const [playListItems, setPLayListItems] = useState([]);
+  const [trackIDs, setTrackIDs] = useState([]);
 
   async function handleYTToSpotify() {
     //Fetch YT PLaylist Items
@@ -67,7 +68,28 @@ export default function Dashboard() {
     }
 
     //Get spotify IDs for YT songs
-    async function getSpotifyIDs() {}
+    async function getSpotifyIDs() {
+      for (let i = 0; i++; i < playListItems.length) {
+        await axios
+          .get("https://api.spotify.com/v1/search", {
+            params: {
+              q: req.query.q,
+              type: "track",
+              limit: 1,
+            },
+            headers: {
+              Authorization:
+                "Bearer " + sessionStorage.getItem("spotify_access_token"),
+            },
+          })
+          .then((res) => {
+            setTrackIDs((prev) => [...prev, res.data.tracks.items[0].id]);
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    }
 
     //Add songs to newly created spotify playlist
     async function addToSpotifyPlaylist() {}
@@ -82,6 +104,7 @@ export default function Dashboard() {
 
   function handleSpotifyToYT() {}
 
+  console.log(trackIDs);
   return (
     <div className="w-full flex flex-col gap-4 ">
       <input
