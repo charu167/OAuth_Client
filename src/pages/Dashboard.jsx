@@ -8,7 +8,7 @@ import { uselinkParser } from "../hooks/useLinkParser";
 
 export default function Dashboard() {
   // Login Check
-  // useLogin();
+  useLogin();
 
   const [done, setDone] = useState(true);
 
