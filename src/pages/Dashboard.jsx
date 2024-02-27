@@ -8,7 +8,7 @@ import { uselinkParser } from "../hooks/useLinkParser";
 
 export default function Dashboard() {
   // Login Check
-  useLogin();
+  // useLogin();
 
   const [done, setDone] = useState(true);
 
@@ -43,7 +43,28 @@ export default function Dashboard() {
     }
 
     //Create Spotify Playlist
-    async function createSpotifyPlaylist() {}
+    async function createSpotifyPlaylist() {
+      await axios
+        .post(
+          "https://api.spotify.com/v1/users/31ollgelkkxc2k6bu2q4vc2r2avq/playlists",
+          {
+            name: "API Playlist",
+          },
+          {
+            headers: {
+              Authorization:
+                "Bearer " + sessionStorage.getItem("spotify_access_token"),
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
 
     //Get spotify IDs for YT songs
     async function getSpotifyIDs() {}
