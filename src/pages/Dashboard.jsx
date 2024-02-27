@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, ServerCog } from "lucide-react";
+import axios from "axios";
 
 //Importing Custom Hooks
 import { useLogin } from "../hooks/useLogin";
@@ -9,8 +10,56 @@ export default function Dashboard() {
   // Login Check
   useLogin();
 
+  const [done, setDone] = useState(true);
+
   const [link, setLink] = useState("");
   const [service, playListID] = uselinkParser(link);
+
+  const [playListItems, setPLayListItems] = useState([]);
+
+  async function handleYTToSpotify() {
+    //Fetch YT PLaylist Items
+    async function fetchYTPLaylist(pageToken) {
+      await axios
+        .get("https://www.googleapis.com/youtube/v3/playlistItems", {
+          params: {
+            part: "snippet",
+            playlistId: playListID,
+            key: "AIzaSyBDAZp4acUkJAF_jVOjSnaplaVVglYjEuQ",
+            pageToken,
+          },
+        })
+        .then((res) => {
+          res.data.items.map((e) => {
+            setPLayListItems((prev) => [...prev, e.snippet.title]);
+          });
+          if (res.data.nextPageToken) {
+            fetchYTPLaylist(res.data.nextPageToken);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+
+    //Create Spotify Playlist
+    async function createSpotifyPlaylist() {}
+
+    //Get spotify IDs for YT songs
+    async function getSpotifyIDs() {}
+
+    //Add songs to newly created spotify playlist
+    async function addToSpotifyPlaylist() {}
+
+    setDone(false);
+    await fetchYTPLaylist();
+    await createSpotifyPlaylist();
+    await getSpotifyIDs();
+    await addToSpotifyPlaylist();
+    setDone(true);
+  }
+
+  function handleSpotifyToYT() {}
 
   return (
     <div className="w-full flex flex-col gap-4 ">
@@ -24,12 +73,24 @@ export default function Dashboard() {
         value={link}
       />
 
-      <button className="flex justify-between gap-4">
+      <button
+        onClick={() => {
+          if (service === "youtube") {
+            handleYTToSpotify();
+          } else if (service === "spotify") {
+            handleSpotifyToYT();
+          }
+        }}
+        className="flex justify-between gap-4"
+      >
+        <span>{service}</span>
         <ArrowRight />
+        <span>
+          {service === "youtube" ? "spotify" : ""}
+          {service === "spotify" ? "youtube" : ""}
+        </span>
+        {done === false ? "Working..." : ""}
       </button>
-
-      <h4>{service}</h4>
-      <h4> {playListID} </h4>
     </div>
   );
 }
