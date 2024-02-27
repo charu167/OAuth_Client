@@ -84,6 +84,7 @@ export default function Dashboard() {
           })
           .then((res) => {
             setTrackIDs((prev) => [...prev, res.data.tracks.items[0].id]);
+            console.log(res.data)
           })
           .catch((err) => {
             console.log(err);
