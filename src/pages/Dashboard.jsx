@@ -15,9 +15,6 @@ export default function Dashboard() {
   const [link, setLink] = useState("");
   const [service, playListID] = uselinkParser(link);
 
-  const [playListItems, setPLayListItems] = useState([]);
-  const [trackIDs, setTrackIDs] = useState([]);
-
   async function handleYTToSpotify() {
     //Fetch YT PLaylist Items
     function fetchYTPLaylist(pageToken = "", playListItemsAcc = []) {
@@ -36,7 +33,6 @@ export default function Dashboard() {
           if (res.data.nextPageToken) {
             return fetchYTPLaylist(res.data.nextPageToken, allItems);
           } else {
-            setPLayListItems(allItems); // Update state once after all fetches
             return allItems; // Resolve with all fetched items
           }
         });
