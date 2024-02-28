@@ -8,7 +8,7 @@ import { uselinkParser } from "../hooks/useLinkParser";
 
 export default function Dashboard() {
   // Login Check
-  useLogin();
+  // useLogin();
 
   const [done, setDone] = useState(true);
 
@@ -20,8 +20,8 @@ export default function Dashboard() {
 
   async function handleYTToSpotify() {
     //Fetch YT PLaylist Items
-    async function fetchYTPLaylist(pageToken) {
-      await axios
+    function fetchYTPLaylist(pageToken = "", playListItemsAcc = []) {
+      return axios
         .get("https://www.googleapis.com/youtube/v3/playlistItems", {
           params: {
             part: "snippet",
@@ -31,49 +31,46 @@ export default function Dashboard() {
           },
         })
         .then((res) => {
-          res.data.items.map((e) => {
-            setPLayListItems((prev) => [...prev, e.snippet.title]);
-          });
+          const newItems = res.data.items.map((e) => e.snippet.title);
+          const allItems = [...playListItemsAcc, ...newItems];
           if (res.data.nextPageToken) {
-            fetchYTPLaylist(res.data.nextPageToken);
+            return fetchYTPLaylist(res.data.nextPageToken, allItems);
+          } else {
+            setPLayListItems(allItems); // Update state once after all fetches
+            return allItems; // Resolve with all fetched items
           }
-        })
-        .catch((err) => {
-          console.log(err);
         });
     }
 
     //Create Spotify Playlist
     async function createSpotifyPlaylist() {
-      await axios
-        .post(
-          "https://api.spotify.com/v1/users/31ollgelkkxc2k6bu2q4vc2r2avq/playlists",
-          {
-            name: "API Playlist",
+      const response = await axios.post(
+        `https://api.spotify.com/v1/users/${sessionStorage.getItem(
+          "spotifyID"
+        )}/playlists`,
+        {
+          name: "API Playlist",
+        },
+        {
+          headers: {
+            Authorization:
+              "Bearer " + sessionStorage.getItem("spotify_access_token"),
+            "Content-Type": "application/json",
           },
-          {
-            headers: {
-              Authorization:
-                "Bearer " + sessionStorage.getItem("spotify_access_token"),
-              "Content-Type": "application/json",
-            },
-          }
-        )
-        .then((res) => {
-          console.log(res.data);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        }
+      );
+      const playlistId = response.data.id; // Assuming the response includes the playlist ID
+      console.log("Created Spotify playlist ID:", playlistId);
+      return playlistId;
     }
 
     //Get spotify IDs for YT songs
-    async function getSpotifyIDs() {
-      for (let i = 0; i++; i < playListItems.length) {
-        await axios
+    async function getSpotifyIDs(playListItems) {
+      const requests = playListItems.map((item) => {
+        return axios
           .get("https://api.spotify.com/v1/search", {
             params: {
-              q: req.query.q,
+              q: item, // Assuming you meant to search for the item here
               type: "track",
               limit: 1,
             },
@@ -83,29 +80,59 @@ export default function Dashboard() {
             },
           })
           .then((res) => {
-            setTrackIDs((prev) => [...prev, res.data.tracks.items[0].id]);
-            console.log(res.data)
+            return res.data.tracks.items.length > 0
+              ? res.data.tracks.items[0].id
+              : null;
           })
           .catch((err) => {
-            console.log(err);
+            console.error("Error fetching Spotify ID for item:", item, err);
+            return null; // Return null or some indication of failure
           });
-      }
+      });
+
+      const trackIds = await Promise.all(requests);
+      return trackIds.filter((id) => id !== null); // Filter out nulls if any request failed
     }
 
     //Add songs to newly created spotify playlist
-    async function addToSpotifyPlaylist() {}
+    async function addToSpotifyPlaylist(playlistId, trackIds) {
+      const uris = trackIds.map((id) => `spotify:track:${id}`);
+      await axios
+        .post(
+          `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+          {
+            uris: uris,
+            position: 0,
+          },
+          {
+            headers: {
+              Authorization:
+                "Bearer " + sessionStorage.getItem("spotify_access_token"),
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then()
+        .catch((err) => {
+          console.log(err);
+        });
+      console.log(`Added tracks to Spotify playlist ${playlistId}`);
+    }
 
+    //Calling functions
     setDone(false);
-    await fetchYTPLaylist();
-    await createSpotifyPlaylist();
-    await getSpotifyIDs();
-    await addToSpotifyPlaylist();
+
+    const allPlaylistItems = await fetchYTPLaylist();
+    const trackIds = await getSpotifyIDs(allPlaylistItems); // Fetch and directly use the track IDs
+
+    const playlistId = await createSpotifyPlaylist();
+    await addToSpotifyPlaylist(playlistId, trackIds); // Pass the fetched track IDs directly
+
     setDone(true);
   }
 
   function handleSpotifyToYT() {}
 
-  console.log(trackIDs);
   return (
     <div className="w-full flex flex-col gap-4 ">
       <input
