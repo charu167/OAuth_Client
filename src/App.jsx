@@ -5,11 +5,11 @@ import "./App.css";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 
-import CallbackGoogle from "./pages/CallbackGoogle";
-import CallbackSpotify from "./pages/CallbackSpotify";
+import CallbackGoogle from "./pages/Oauth/CallbackGoogle";
+import CallbackSpotify from "./pages/Oauth/CallbackSpotify";
 
-import GoogleAuth from "./pages/GoogleAuth";
-import SpotifyAuth from "./pages/SpotifyAuth";
+import GoogleAuth from "./pages/Oauth/GoogleAuth";
+import SpotifyAuth from "./pages/Oauth/SpotifyAuth";
 
 function App() {
   return (
