@@ -2,6 +2,24 @@ import axios from "axios";
 
 const spotifyAccessToken = sessionStorage.getItem("spotify_access_token");
 
+//Get playlist items
+export async function fetchSpotifyPlaylist(playlistId) {
+  const accessToken = sessionStorage.getItem("spotify_access_token");
+  const response = await axios.get(
+    `https://api.spotify.com/v1/playlists/${playlistId}/tracks`,
+    {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    }
+  );
+  const tracks = response.data.items.map((item) => ({
+    name: item.track.name,
+    artist: item.track.artists.map((artist) => artist.name).join(", "),
+  }));
+  return tracks;
+}
+
 //Get spotify IDs for YT songs
 export async function getSpotifyIDs(playListItems) {
   const requests = playListItems.map((item) => {

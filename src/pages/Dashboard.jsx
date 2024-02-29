@@ -7,8 +7,14 @@ import { useLogin } from "../hooks/useLogin";
 import { uselinkParser } from "../hooks/useLinkParser";
 
 //Importing service functions
-import { fetchYTPLaylist } from "../services/YoutubeService";
 import {
+  fetchYTPLaylist,
+  getYoutubeIDs,
+  createYouTubePlaylist,
+  addVideosToYouTubePlaylist,
+} from "../services/YoutubeService";
+import {
+  fetchSpotifyPlaylist,
   getSpotifyIDs,
   createSpotifyPlaylist,
   addToSpotifyPlaylist,
@@ -41,7 +47,18 @@ export default function Dashboard() {
     setDone(true);
   }
 
-  function handleSpotifyToYT() {}
+  async function handleSpotifyToYT() {
+    //Calling functions
+    setDone(false);
+
+    const tracks = await fetchSpotifyPlaylist(playListID);
+    const videoIDs = await getYoutubeIDs(tracks);
+    const youtubePlaylistId = await createYouTubePlaylist("SyncWave Playlist");
+    await addVideosToYouTubePlaylist(youtubePlaylistId, videoIDs);
+
+    setFinalLink(`https://www.youtube.com/playlist?list=${youtubePlaylistId}`);
+    setDone(true);
+  }
 
   return (
     <div className="w-full flex flex-col gap-4">
