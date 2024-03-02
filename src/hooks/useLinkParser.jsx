@@ -8,7 +8,9 @@ function uselinkParser(link) {
     (() => {
       if (link !== "") {
         if (link.includes("youtube")) {
-          setPlaylistID(link.split("list=")[1]);
+          let a = link.split("list=")
+          let b = link[1].split('&si=')
+          setPlaylistID(b[0]);
           setService("youtube");
         } else if (link.includes("spotify")) {
           setPlaylistID(link.split("playlist/")[1]);
