@@ -62,6 +62,7 @@ export default function Dashboard() {
 
   return (
     <div className="w-full flex flex-col gap-4">
+      <h2>Paste a link of youtube/spotify public playlist</h2>
       <input
         type="text"
         placeholder="Youtube/Spotify Playlist"
