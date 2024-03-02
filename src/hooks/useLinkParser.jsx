@@ -14,7 +14,7 @@ function uselinkParser(link) {
           setService("youtube");
         } else if (link.includes("spotify")) {
           let a = link.split("playlist/");
-          let b = a[1].split("&si=");
+          let b = a[1].split("?si=");
           setPlaylistID(b[0]);
           setService("spotify");
         } else {
