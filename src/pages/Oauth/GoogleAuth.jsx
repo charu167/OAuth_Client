@@ -19,6 +19,10 @@ export default function GoogleAuth() {
   return (
     <div>
       <h1>OAuth</h1>
+      <h2>Since, this app uses google's OAuth protocol in test mode, only registered email IDs can be authenticated.</h2>
+      <h3>Non-registered users can use following credentials for trial</h3>
+      <h3>email: testg2657@gmail.com</h3>
+      <h3>password: google.test@111</h3>
       <button onClick={handleGoogleLogin}>Login with Google</button>
     </div>
   );

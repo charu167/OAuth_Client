@@ -17,6 +17,8 @@ export default function SpotifyAuth() {
   return (
     <div>
       <h1>OAuth</h1>
+      <h2>Spotify has no such thing as  test mode, so you can go ahead and login with your own account</h2>
+      <h3>(trust me I'm not stealing your data. If I was capable of that I'd be far more valuable!😂)</h3>
       <button onClick={handleLogin}>Login with Spotify</button>
     </div>
   );
