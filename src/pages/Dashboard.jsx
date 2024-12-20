@@ -61,53 +61,69 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="w-full flex flex-col gap-4">
-      <h2>Paste a link of youtube/spotify public playlist</h2>
-      <input
-        type="text"
-        placeholder="Youtube/Spotify Playlist"
-        className="p-2 rounded-full w-full text-center"
-        onChange={(e) => {
-          setLink(e.target.value);
-        }}
-        value={link}
-      />
-
-      <button
-        onClick={() => {
-          if (service === "youtube") {
-            handleYTToSpotify();
-          } else if (service === "spotify") {
-            handleSpotifyToYT();
-          }
-        }}
-        className="flex justify-center gap-8"
-      >
-        {done ? (
-          <>
-            <span>
-              {service === "youtube" ? <Youtube /> : ""}
-              {service === "spotify" ? <Disc2 /> : ""}
+    <div className="h-screen w-full bg-gradient-to-br from-green-950 via-green-950 to-green-950 flex items-center justify-center">
+      <div className="bg-white shadow-xl rounded-lg p-10 w-11/12 md:w-2/3 lg:w-1/2 relative">
+        <h2 className="text-3xl font-extrabold text-black text-center mb-2">
+          Convert Your Playlist Effortlessly
+        </h2>
+        <p className="text-gray-500 font-semibold text-base text-center mb-6">
+          Paste the link of a YouTube or Spotify public playlist below to start the magic!
+        </p>
+        <div className="relative mb-6">
+          <input
+            type="text"
+            placeholder="Enter YouTube/Spotify Playlist URL"
+            className="p-4 rounded-lg w-full border border-green-950 text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 shadow-lg placeholder-gray-400 text-center"
+            onChange={(e) => {
+              setLink(e.target.value);
+            }}
+            value={link}
+          />
+          {/* <div className="absolute inset-y-0 right-4 flex items-center gap-2">
+            <Youtube className="text-red-500 w-5 h-5" />
+            <Disc2 className="text-green-500 w-5 h-5" />
+          </div> */}
+        </div>
+        <button
+          onClick={() => {
+            if (service === "youtube") {
+              handleYTToSpotify();
+            } else if (service === "spotify") {
+              handleSpotifyToYT();
+            }
+          }}
+          className="w-full py-3 bg-green-700 text-white font-semibold rounded-full shadow-lg hover:bg-green-800 transition flex items-center justify-center gap-4 mb-6"
+        >
+          {done ? (
+            <>
+              <span>
+                {service === "youtube" ? <Youtube /> : ""}
+                {service === "spotify" ? <Disc2 /> : ""}
+              </span>
+              <ArrowRight />
+              <span>
+                {service === "youtube" ? <Disc2 /> : ""}
+                {service === "spotify" ? <Youtube /> : ""}
+              </span>
+            </>
+          ) : (
+            <span>Processing your request...</span>
+          )}
+        </button>
+        {finalLink && (
+          <div className="text-center">
+            <span className="text-gray-700">
+              Your converted playlist is ready: {" "}
+              <a href={finalLink} target="_blank" rel="noopener noreferrer" className="text-green-700 font-medium underline">
+                Click here to access
+              </a>
             </span>
-            <ArrowRight />
-            <span>
-              {service === "youtube" ? <Disc2 /> : ""}
-              {service === "spotify" ? <Youtube /> : ""}
-            </span>
-          </>
-        ) : (
-          <span>Working on it...</span>
+          </div>
         )}
-      </button>
-
-      {finalLink === "" ? null : (
-        <span>
-          Access your playlist{" "}
-          <a href={finalLink} target="blank">
-            here
-          </a>
-        </span>
-      )}
+        <div className="absolute -top-6 right-6 w-12 h-12 rounded-full bg-green-700 text-white flex items-center justify-center shadow-md">
+          🎵
+        </div>
+      </div>
     </div>
   );
 }
